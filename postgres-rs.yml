@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: postgresdb
+  labels:
+    app: postgresdbapp
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: postgresdbapp
+  template:
+    metadata:
+      labels:
+        app: postgresdbapp
+    spec:
+      containers:
+        - name: postgresdbcontainer
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: author
+            - name: POSTGRES_USER
+              value: admin
+            - name: POSTGRES_PASSWORD
+              value: password
