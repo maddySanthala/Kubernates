@@ -1,0 +1,24 @@
+---
+version: v1
+kind: Pod
+metadata: 
+  name: mysql
+  namespace: my-namespace
+  labels:
+    name: mysql
+    purpose: learning
+spec:
+  containers:
+    - name: mysql_container
+      image: mysql:latest
+      env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: admin
+        - name: MYSQL_DATABASE
+          value: author
+        - name: MYSQL_USER
+          value: admin
+        - name : MYSQL_PASSWORD
+          value: admin
+      ports:
+        containerport: 80
