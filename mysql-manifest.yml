@@ -1,0 +1,21 @@
+---
+apiVersion: apps/v1
+kind: pod
+metadata:
+  name: mysql
+spec:
+  containers:
+    - name: sqlcontainer
+      image: mysql:latest
+      env:
+      - name: MYSQL_ROOT_PASSWORD
+        value: admin
+      - name: MYSQL_DATABASE
+        value: author
+      - name: MYSQL_USER
+        value: admin
+      - name: MYSQL_PASSWORD
+        value: admin
+      ports:
+        - containerPort: 
+        
