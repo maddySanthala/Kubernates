@@ -1,0 +1,36 @@
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: pet-rs
+spec:
+  minReadySeconds: 25
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pet
+  template:
+    metadata:
+      name: pet
+      labels:
+        app: pet
+        env: dev
+    spec:
+      containers:
+        - name: pet
+          imagePullPolicy: Always
+          image: shaikkhajaibrahim/spcjan2024:1.0
+          ports:
+            - containerPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pet-svc
+spec:
+  selector:
+    app: pet
+  ports:
+    - port: 8080
+      targetPort: 8080
