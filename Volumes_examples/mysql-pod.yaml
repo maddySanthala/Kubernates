@@ -8,7 +8,7 @@ metadata:
 spec:
   containers:
     - name:  mysql-pod
-      image: mysql-latest
+      image: mysql:latest
       env:
         - name: MYSQL_ROOT_PASSWORD
           value: admin
