@@ -1,0 +1,88 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: web-dep
+  namespace: dev
+  labels: 
+    app : web
+    env: dev
+    author: madhu
+spec:
+  minReadySeconds: 20
+  replicas: 2
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: web
+  strategy:
+    rollingUpdate:
+      maxSurge: 50%
+      maxUnavailable: 50%
+    type: RollingUpdate
+  template:
+    metadata:
+      name: web-dep
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: web-cont
+          image: shaikkhajaibrahim/dmtest:2.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: web-pvc
+              mountPath: /config
+          livenessProbe:
+            initialDelaySeconds: 5
+            successThreshold: 1
+            failureThreshold: 2
+            httpGet:
+              path: /
+              port: 80
+          startupProbe:
+            initialDelaySeconds: 5
+            successThreshold: 1
+            failureThreshold: 2
+            httpGet:
+              path: /
+              port: 80
+      volumes: 
+        - name: web-pvc
+          persistentVolumeClaim:
+            readOnly: false 
+            claimName: web-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-svc
+  labels:
+    app: web
+  namespace: dev
+spec: 
+  externalName: web-svc
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  type: NodePort
+  selector:
+    app: web
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: web-pvc
+  labels:
+    app: web
+  namespace: dev
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests: 
+      storage: 250Mi

@@ -23,4 +23,5 @@ spec:
     - name: mysql
       image: mysql:latest
       envFrom:
-        - configMapRef: mysql-cms
+        configMapRef:
+          name: mysql-cms
