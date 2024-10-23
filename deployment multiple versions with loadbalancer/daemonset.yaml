@@ -1,0 +1,22 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fulentd-logs
+  labels:
+    app : fulent-logs
+spec:
+  selector:
+    matchLabels:
+      app: fulent-logs
+  template:
+    metadata:
+      labels: 
+        app: fulent-logs
+    spec:
+      containers:
+        - name: fulent-logs-conta
+          image: fluentd:v1.17.1-debian-1.0
+          ports:
+            - containerPort: 24224
+              protocol: TCP
