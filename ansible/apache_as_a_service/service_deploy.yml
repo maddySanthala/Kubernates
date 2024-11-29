@@ -1,0 +1,20 @@
+---
+- name: deploying apache 10 on ubuntu machine
+  hosts: webservers
+  become: yes
+  tasks:
+    - name: install java on the machine
+      ansible.builtin.apt:
+        name: "{{ java_version }}"
+        state: present
+        update_cache: yes
+    - name: create user groups
+      ansible.builtin.group:
+        name: "{{ group }}"
+        state: present
+    - name: create a system user
+      ansible.builtin.user:
+        name: "{{ user }}"
+        shell: /bin/false
+        groups: "{{ user }}"
+        home: "{{ home_dir }}"

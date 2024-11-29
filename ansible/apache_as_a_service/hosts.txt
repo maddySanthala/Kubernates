@@ -1,0 +1,7 @@
+[webservers]
+172.31.46.39
+
+[ubuntu]
+172.31.46.39
+
+[redhat]
