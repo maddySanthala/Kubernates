@@ -2,3 +2,4 @@ java_version: openjdk-11-jdk
 user: tomcat
 home_dir: /opt/tomcat
 group: tomcat
+VERSION: 10.1.4

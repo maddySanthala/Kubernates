@@ -18,3 +18,22 @@
         shell: /bin/false
         groups: "{{ user }}"
         home: "{{ home_dir }}"
+        password: "*"
+    - name: download tomcat zip ad unzip the file to a location
+      ansible.builtin.unarchive:
+        src: https://archive.apache.org/dist/tomcat/tomcat-10/v{{ VERSION }}/bin/apache-tomcat-{{ VERSION }}.tar.gz
+        dest: "{{ home_dir }}"
+        remote_src: yes
+    - name: Create a symbolic link
+      ansible.builtin.file:
+        src: "{{ home_dir }}/apache-tomcat-${{ VERSION }}"
+        dest: "{{ home_dir }}/latest"
+        owner: "{{ user }}"
+        group: "{{ user }}"
+        state: link
+    - name: Change file ownership, group and permissions
+      ansible.builtin.file:
+        path: "{{ home_dir }}"
+        owner: "{{ user }}"
+        group: "{{ user }}"
+        mode: '0644'
