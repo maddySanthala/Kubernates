@@ -34,6 +34,24 @@
     - name: Change file ownership, group and permissions
       ansible.builtin.file:
         path: "{{ home_dir }}"
+        state: directory
+        recurse: yes
         owner: "{{ user }}"
         group: "{{ user }}"
         mode: '0644'
+    - name: shell script must be executable
+      ansible.builtin.shell:
+        cmd: chmod +x /opt/tomcat/latest/bin/*.sh
+        executable: /bin/bash
+    - name: copy service file to target
+      ansible.builtin.copy:
+        src: /tomcat.service
+        dest: /etc/systemd/system/tomcat.service
+    - name: reload systemd daemon
+      ansible.builtin.systemd_service:
+        daemon_reload: true
+    - name: Start service httpd, if not started
+      ansible.builtin.service:
+        name: apache2
+        state: started
+    - 
