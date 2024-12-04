@@ -1,0 +1,60 @@
+---
+- name: Deployig nop application as the service
+  hosts: all
+  become: yes
+  tasks:
+    - name: install dotnet
+      ansible.builtin.apt:
+        name: "{{ dotnet_version }}"
+        state: present
+        update_cache: yes
+    - name: create nop group
+      ansible.builtin.group:
+        name: "{{ group }}"
+        state: present
+    - name: create nop user
+      ansible.builtin.user:
+        name: "{{ user }}"
+        home: "{{ home_directory }}" 
+        group: "{{ group }}"
+        create_home: yes
+    - name: create nopCommerce directory
+      ansible.builtin.file:
+        path: /tmp/nopCommerce
+        state: directory
+        recurse: yes
+        owner: "{{ user }}"
+        group: "{{ group }}"
+    - name: download nop files and unzip files in remote
+      ansible.builtin.unarchive:
+        src: /https://github.com/nopSolutions/nopCommerce/releases/download/release-4.70.5/nopCommerce_4.70.5_NoSource_linux_x64.zip
+        dest: /tmp/nopCommerce
+        remote_src: yes
+    - name: create bin and logs folders
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ user }}"
+        group: "{{ group }}"
+        mode: 0775
+        loop:
+          - /tmp/nopCommerce/bin
+          - /tmp/nopCommerce/logs
+    - name: Copy file with owner and permissions
+      ansible.builtin.copy:
+        src: /tmp/nopCommerce
+        dest: /var/lib/nopCommerce
+        owner: "{{ user }}"
+        group: "{{ group }}"
+        mode: '0644'
+    - name: Copy file with owner and permissions
+      ansible.builtin.copy:
+        src: /nopCommerce.service.j2
+        dest: /etc/systemd/system/nopCommerce.service
+    - name: daemon reload
+      ansible.builtin.systemd_service:
+        daemon_reload: true
+    - name: Enable and start service nop
+      ansible.builtin.service:
+        name: nopCommerce.service
+        enabled: yes
