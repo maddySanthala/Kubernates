@@ -1,6 +1,6 @@
 ---
 - name: deploying spc application as a service
-  hosts: webserver
+  hosts: all
   become: yes
   tasks:
     - name: download and install java
@@ -38,13 +38,13 @@
         group: "{{ group }}"
         mode: '0755'
       notify:
-        - reload the daemon
         - start spc
-  handlers:
     - name: reload the daemon
       ansible.builtin.systemd_service:
+        name: spc.service
         state: restarted
         daemon_reload: true
+  handlers:
     - name: Start spc
       ansible.builtin.service:
         name: spc.service
