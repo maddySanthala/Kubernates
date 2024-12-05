@@ -1,0 +1,54 @@
+---
+- name: deploying spc application as a service
+  hosts: webserver
+  become: yes
+  tasks:
+    - name: download and install java
+      ansible.builtin.apt:
+        name: "{{ jdk_version }}"
+        state: latest
+        update_cache: yes
+    - name: Ensure group "somegroup" exists
+      ansible.builtin.group:
+        name: "{{ group }}"
+        state: present
+    - name: Add the spc user with home directory
+      ansible.builtin.user:
+        name: "{{ user }}"
+        shell: /bin/bash
+        groups: "{{ group }}"
+        home: "{{ home_dir }}"
+        append: yes
+    - name: add spc ownership permissions to home directory
+      ansible.builtin.file:
+        path: "{{ home_dir }}"
+        owner: "{{ user }}"
+        group: "{{ group }}"
+        recurse: yes
+        mode: '0755'
+    - name: Download jar to home directory
+      ansible.builtin.get_url:
+        url: https://referenceappslt.s3.ap-south-1.amazonaws.com/spring-petclinic-3.3.0-SNAPSHOT.jar
+        dest: "{{ home_dir }}"
+    - name: copy service file to the system
+      ansible.builtin.copy:
+        src: spc.service
+        dest: /usr/lib/systemd/system/spc.service
+        owner: "{{ user }}"
+        group: "{{ group }}"
+        mode: '0755'
+      notify:
+        - reload the daemon
+        - start spc
+  handlers:
+    - name: reload the daemon
+      ansible.builtin.systemd_service:
+        state: restarted
+        daemon_reload: true
+    - name: Start spc
+      ansible.builtin.service:
+        name: spc.service
+        state: started
+        enabled: true
+    
+    

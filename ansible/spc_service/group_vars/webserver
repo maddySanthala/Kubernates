@@ -1,0 +1,4 @@
+jdk_version: openjdk-17-jdk
+group: spc
+user: spc
+home_dir: /var/lib/spc
