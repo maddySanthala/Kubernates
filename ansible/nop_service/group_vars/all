@@ -1,4 +1,4 @@
 user: nop
 group: nop
-home_directory: /var/lib/nopCommerce
+home_dir: /var/lib/nopCommerce
 dotnet_version: dotnet-sdk-8.0

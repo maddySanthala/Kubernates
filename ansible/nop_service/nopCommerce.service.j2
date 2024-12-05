@@ -1,8 +1,8 @@
 [Unit]
 Description=nopCommerce app running on ubuntu
 [Service]
-WorkingDirectory={{ home_dir }}
-ExecStart=/usr/bin/dotnet {{ home_dir }}/Nop.Web.dll
+WorkingDirectory=/var/lib/nopCommerce
+ExecStart=/usr/bin/dotnet /var/lib/nopCommerce/Nop.Web.dll
 Restart=always
 # Restart service after 10 seconds if the dotnet service crashes:
 RestartSec=10
