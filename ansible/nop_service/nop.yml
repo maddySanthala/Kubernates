@@ -8,7 +8,7 @@
         name: "{{ item }}"
         state: present
         update_cache: yes
-      loop: 
+      loop:
         - dotnet-sdk-8.0
         - unzip
     - name: create nop group
@@ -18,9 +18,16 @@
     - name: create nop user
       ansible.builtin.user:
         name: "{{ user }}"
-        home: "{{ home_directory }}" 
+        home: "{{ home_dir }}"
         group: "{{ group }}"
         create_home: yes
+    - name: set ownership and permissions for home directory
+      ansible.builtin.file:
+        path: "{{ home_dir }}"
+        owner: "{{ user }}"
+        group: "{{ group }}"
+        recurse: yes
+        mode: "0700"
     - name: download nop files and unzip files in remote
       ansible.builtin.unarchive:
         src: https://github.com/nopSolutions/nopCommerce/releases/download/release-4.70.5/nopCommerce_4.70.5_NoSource_linux_x64.zip
