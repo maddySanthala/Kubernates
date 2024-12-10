@@ -1,0 +1,5 @@
+packages:
+  - nginx
+  - unzip
+name: ubuntu
+group: ubuntu

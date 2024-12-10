@@ -1,19 +1,23 @@
 ---
 - name: deploy nginx 
   hosts: webserver
+  gather_facts: yes
   become: yes
   tasks:
-    - name: install nginx
+    - name: install nginx and unzip
       ansible.builtin.apt:
-        name: nginx
+        name: "{{ item }}"
         update_cache: yes
+      when: ansible_facts['distribution'] == Ubuntu
+      loops:
+        "{{packages}}"
     - name: start the service
       ansible.builtin.service:
-      name: httpd
-      state: started
+        name: nginx
+        state: started
     - name: copy index file
       ansible.builtin.copy:
-      src: index.html
-      dest: /var/www/html
-      owner: ubuntu
-      group: ubuntu
+        src: index.html
+        dest: /var/www/html
+        owner: "{{ user }}"
+        group: "{{ group }}"
