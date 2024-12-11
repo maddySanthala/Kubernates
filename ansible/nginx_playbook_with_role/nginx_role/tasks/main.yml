@@ -1,7 +1,7 @@
 ---
 - name: install nginx and unzip
   ansible.builtin.apt:
-    name: "{{ items }}"
+    name: "{{ item }}"
     update_cache: yes
   loop: "{{ apps }}"
   when: ansible_facts['distribution'] == "Ubuntu"
