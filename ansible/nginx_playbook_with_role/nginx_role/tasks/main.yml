@@ -1,0 +1,23 @@
+---
+- name: install nginx and unzip
+  ansible.builtin.apt:
+    name: "{{ items }}"
+    update_cache: yes
+  loop: "{{ apps }}"
+  when: ansible_facts['distribution'] == "Ubuntu"
+- name: run and enable nginx
+  ansible.builtin.service:
+    name: nginx
+    state: started
+- name: configure nginx
+  ansible.builtin.template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/sites-available/nginx.conf
+  notify:
+    - run and enable nginx
+- name: copy files to remote
+  ansible.builtin.copy:
+    src: index.html
+    dest: /var/www/html/sample
+    owner: "{{ user }}"
+    group: "{{ group }}"

@@ -1,0 +1,5 @@
+apps:
+  - nginx
+  - unzip
+user: Ubuntu
+group: ubuntu
