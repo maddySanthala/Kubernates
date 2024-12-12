@@ -4,6 +4,11 @@
     name: "{{ java_version }}"
     state: latest
     update_cache: yes
+- name: create home directory
+  ansible.builtin.file:
+    path: "{{ home_dir }}"
+    state: directory
+    mode: '0755'
 - name: create tomcat group if not present
   ansible.builtin.group:
     name: "{{ group }}"
@@ -15,6 +20,7 @@
     append: yes
     home: "{{ home_dir }}"
     shell: /bin/false
+    create_home: yes
 - name: Unarchive a file that is already on the remote machine
   ansible.builtin.unarchive:
     src: https://dlcdn.apache.org/tomcat/tomcat-10/v{{version}}/bin/apache-tomcat-{{version}}-fulldocs.tar.gz
@@ -22,11 +28,12 @@
     remote_src: yes
 - name: Create a symbolic link
   ansible.builtin.file:
-    src: "{{home_dir}}/apache-tomcat-${{version}"
+    src: "{{home_dir}}/apache-tomcat-${{version}}"
     dest: "{{home_dir}}/latest"
     owner: "{{ user }}"
     group: "{{ group }}"
     state: link
+    force: yes
 - name: Change file ownership, group and permissions
   ansible.builtin.file:
     path: "{{ home_dir }}"
@@ -38,12 +45,11 @@
   ansible.builtin.copy:
     src: apache.service.j2
     dest: /etc/systemd/system/tomcat.service
-    remote_src: yes
-- name: daemon reload
-  ansible.builtin.systemd_service:
+- name: reload the daemon
+  ansible.builtin.systemd:
     daemon_reload: true
 - name: Start service apache, if not started
   ansible.builtin.service:
-    name: httpd
+    name: apache.service
     state: started
     enabled: yes
