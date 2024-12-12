@@ -1,0 +1,6 @@
+---
+- name: deloy apache as a service
+  become: yes
+  hosts: inventoty
+  roles:
+    - apache
