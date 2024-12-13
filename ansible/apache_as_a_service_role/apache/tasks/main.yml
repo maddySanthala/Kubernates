@@ -26,11 +26,12 @@
 
 - name: Download and unarchive Tomcat
   ansible.builtin.unarchive:
-    src: https://dlcdn.apache.org/tomcat/tomcat-10/v{{ version }}/bin/apache-tomcat-{{ version }}-fulldocs.tar.gz
+    src: https://dlcdn.apache.org/tomcat/tomcat-9/v{{ version }}/bin/apache-tomcat-{{ version }}.tar.gz
     dest: "{{ home_dir }}"
     owner: "{{ user }}"
     group: "{{ group }}"
     remote_src: yes
+    creates: "{{ home_dir }}/apache-tomcat-{{ version }}"
 
 - name: Create a symbolic link
   ansible.builtin.file:
@@ -69,3 +70,13 @@
     name: tomcat.service
     state: started
     enabled: yes
+
+- name: Copy file with owner and permission, using symbolic representation
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ user }}"
+    group: "{{ group }}"
+  loop: "{{ pcks }}"
+  notify: 
+    - restart the service

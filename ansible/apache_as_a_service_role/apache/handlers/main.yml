@@ -1,4 +1,4 @@
 - name: restart the service
   ansible.builtin.service:
-    name: apache.service
+    name: tomcat.service
     state: restarted
