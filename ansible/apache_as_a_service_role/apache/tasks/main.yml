@@ -1,19 +1,21 @@
----
-- name: install java on the machine
+- name: Install Java on the machine
   ansible.builtin.apt:
     name: "{{ java_version }}"
     state: latest
     update_cache: yes
-- name: create home directory
+
+- name: Create home directory
   ansible.builtin.file:
     path: "{{ home_dir }}"
     state: directory
     mode: '0755'
-- name: create tomcat group if not present
+
+- name: Create Tomcat group if not present
   ansible.builtin.group:
     name: "{{ group }}"
     state: present
-- name: add user to the tomcat home dirrectory
+
+- name: Add user to the Tomcat home directory
   ansible.builtin.user:
     name: "{{ user }}"
     groups: "{{ group }}"
@@ -21,19 +23,20 @@
     home: "{{ home_dir }}"
     shell: /bin/false
     create_home: yes
+
 - name: Unarchive a file that is already on the remote machine
   ansible.builtin.unarchive:
-    src: https://dlcdn.apache.org/tomcat/tomcat-10/v{{version}}/bin/apache-tomcat-{{version}}-fulldocs.tar.gz
+    src: https://dlcdn.apache.org/tomcat/tomcat-10/v{{ version }}/bin/apache-tomcat-{{ version }}-fulldocs.tar.gz
     dest: "{{ home_dir }}"
-    remote_src: yes
+    remote_src: no
+
 - name: Create a symbolic link
   ansible.builtin.file:
     src: "{{ home_dir }}/apache-tomcat-{{ version }}"
     dest: "{{ home_dir }}/latest"
-    owner: "{{ user }}"
-    group: "{{ group }}"
     state: link
     force: yes
+
 - name: Set permissions and ownership for Tomcat directory
   ansible.builtin.file:
     path: "{{ home_dir }}/apache-tomcat-{{ version }}"
@@ -42,17 +45,18 @@
     group: "{{ group }}"
     mode: '0755'
     recurse: yes
+
 - name: Copy service file to systemd
   ansible.builtin.template:
     src: apache.service.j2
     dest: /etc/systemd/system/apache.service
-    owner: "{{ user }}"
-    group: "{{ group }}"
-  notify: 
-    - restart the service
-- name: reload the daemon
+    notify: 
+      - restart the service
+
+- name: Reload the daemon
   ansible.builtin.systemd:
     daemon_reload: true
+
 - name: Start service apache, if not started
   ansible.builtin.service:
     name: apache.service
