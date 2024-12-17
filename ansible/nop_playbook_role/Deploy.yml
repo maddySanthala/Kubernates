@@ -2,4 +2,5 @@
 - name: deploy nop
   become: yes
   hosts: all
-  roles: nop_role
+  roles: 
+    - nop_role
