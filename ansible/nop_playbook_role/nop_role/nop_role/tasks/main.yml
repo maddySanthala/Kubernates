@@ -1,0 +1,43 @@
+- name: download the dotnet runtime
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    update_cache: yes
+  loop: "{{ packages }}"
+- name: Start service nginx, if not started
+  ansible.builtin.service:
+    name: nginx
+    state: started
+- name: Change default file settings
+  ansible.builtin.template:
+    src: default.j2
+    dest: /etc/nginx/sites-available/default
+- name: Create necessary directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+  loop: "{{ folders }}"
+- name: Unarchive nop
+  ansible.builtin.unarchive:
+    src: https://github.com/nopSolutions/nopCommerce/releases/download/release-4.70.5/nopCommerce_4.70.5_NoSource_linux_x64.zip
+    dest: "{{ home_dir }}"
+    remote_src: yes
+- name: Recursively change ownership of a directory
+  ansible.builtin.file:
+    path: "{{ home_dir }}"
+    state: directory
+    recurse: yes
+    owner: "{{ user }}"
+    group: "{{ group }}"
+- name: Create and move nop.service
+  ansible.builtin.template:
+    src: nopCommerce.service.j2
+    dest: /etc/systemd/system/nopCommerce.service
+- name: Start nop service
+  ansible.builtin.service:
+    name: nopCommerce.service
+    state: started
+- name: restart nginx
+  ansible.builtin.service:
+    name: nginx
+    state: restarted
+

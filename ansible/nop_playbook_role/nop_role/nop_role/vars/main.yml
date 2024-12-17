@@ -1,0 +1,12 @@
+packages:
+  - apt-transport-https
+  - aspnetcore-runtime-8.0
+  - nginx
+  - unzip
+folders:
+  - /var/www/nopCommerce
+  - /var/www/nopCommerce/bin
+  - /var/www/nopCommerce/logs
+user: www-data
+group: www-data
+home_dir: /var/www/nopCommerce
